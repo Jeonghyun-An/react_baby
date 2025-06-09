@@ -2,7 +2,10 @@ import { useState } from "react";
 
 function Square({ value, onSquareClick }) {
     return (
-        <button className="square" onClick={onSquareClick}>
+        <button
+            className="square  h-20 w-20 text-3xl font-bold border border-gray-400 hover:bg-gray-200"
+            onClick={onSquareClick}
+        >
             {value}
         </button>
     );
@@ -32,48 +35,23 @@ function Board({ xIsNext, squares, onPlay }) {
 
     return (
         <>
-            <div className="status">{status}</div>
-            <div className="board-row">
-                <Square
-                    value={squares[0]}
-                    onSquareClick={() => handleClick(0)}
-                />
-                <Square
-                    value={squares[1]}
-                    onSquareClick={() => handleClick(1)}
-                />
-                <Square
-                    value={squares[2]}
-                    onSquareClick={() => handleClick(2)}
-                />
-            </div>
-            <div className="board-row">
-                <Square
-                    value={squares[3]}
-                    onSquareClick={() => handleClick(3)}
-                />
-                <Square
-                    value={squares[4]}
-                    onSquareClick={() => handleClick(4)}
-                />
-                <Square
-                    value={squares[5]}
-                    onSquareClick={() => handleClick(5)}
-                />
-            </div>
-            <div className="board-row">
-                <Square
-                    value={squares[6]}
-                    onSquareClick={() => handleClick(6)}
-                />
-                <Square
-                    value={squares[7]}
-                    onSquareClick={() => handleClick(7)}
-                />
-                <Square
-                    value={squares[8]}
-                    onSquareClick={() => handleClick(8)}
-                />
+            <div className="status p-4 text-xl font-semibold">{status}</div>
+
+            <div className="flex flex-col gap-2">
+                {[0, 3, 6].map((rowStart) => (
+                    <div key={rowStart} className="flex gap-2 justify-center">
+                        {" "}
+                        {[0, 1, 2].map((colOffset) => (
+                            <Square
+                                key={rowStart + colOffset}
+                                value={squares[rowStart + colOffset]}
+                                onSquareClick={() =>
+                                    handleClick(rowStart + colOffset)
+                                }
+                            />
+                        ))}
+                    </div>
+                ))}
             </div>
         </>
     );
@@ -89,17 +67,34 @@ export default function Game() {
         setXIsNext(!xIsNext);
     }
 
+    function jumpTo(nextMove) {
+        //TODO
+    }
+    const moves = history.map((squares, move) => {
+        let description;
+        if (move > 0) {
+            description = "Go to move #" + move;
+        } else {
+            description = "Go to game start";
+        }
+        return (
+            <li key={move}>
+                <button onClick={() => jumpTo(move)}>{description}</button>
+            </li>
+        );
+    });
+
     return (
-        <div className="game">
-            <div className="game-board">
+        <div className="game flex  item-center justify-center gap-8 p-8">
+            <div className="game-board p-20 ">
                 <Board
                     xIsNext={xIsNext}
                     squares={currentSquares}
                     onPlay={handlePlay}
                 />
             </div>
-            <div className="game-info">
-                <ol>{/*TODO*/}</ol>
+            <div className="game-info flex flex-col p-20 pt-32">
+                <ol className="flex flex-col gap-4">{moves}</ol>
             </div>
         </div>
     );
