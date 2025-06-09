@@ -58,21 +58,19 @@ function Board({ xIsNext, squares, onPlay }) {
 }
 
 export default function Game() {
-    const [xIsNext, setXIsNext] = useState(true);
     const [history, setHistory] = useState([Array(9).fill(null)]);
     const [currentMove, setCurrentMove] = useState(0);
+    const xIsNext = currentMove % 2 === 0;
     const currentSquares = history[currentMove]; // 현재 움직임에 해당하는 보드 상태를 가져옴(lendering)
 
     function handlePlay(nextSquares) {
         const nextHistory = [...history.slice(0, currentMove + 1), nextSquares]; // history.slice(0, currentMove + 1)의 이전 기록 중 해당 부분만 유지하도록
         setHistory(nextHistory);
         setCurrentMove(nextHistory.length - 1); // 시간을 거슬러 올라가 그 지점에서 새로운 움직임을 만들 경우, 그 지점까지의 기록만 유지해야함
-        setXIsNext(!xIsNext);
     }
 
     function jumpTo(nextMove) {
         setCurrentMove(nextMove);
-        setXIsNext(nextMove % 2 === 0); //숫자가 짝수인 경우에도 currentMove 설정
     }
     const moves = history.map((squares, move) => {
         let description;
