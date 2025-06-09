@@ -1,9 +1,11 @@
 import { useState } from "react";
 
-function Square({ value, onSquareClick }) {
+function Square({ value, onSquareClick, highlight }) {
     return (
         <button
-            className="square  h-20 w-20 text-3xl font-bold border border-gray-400 hover:bg-gray-200"
+            className={`square  h-20 w-20 text-3xl font-bold border border-gray-400 hover:bg-gray-200 ${
+                highlight ? "bg-yellow-200" : ""
+            }`}
             onClick={onSquareClick}
         >
             {value}
@@ -25,10 +27,14 @@ function Board({ xIsNext, squares, onPlay }) {
         onPlay(nextSquares);
     }
 
-    const winner = calculateWinner(squares);
+    const result = calculateWinner(squares);
+    const winner = result?.winner;
+    const winningLine = result?.line;
     let status;
     if (winner) {
         status = "Winner: " + winner;
+    } else if (squares.every((square) => square !== null)) {
+        status = "Draw!! GG";
     } else {
         status = "Next player: " + (xIsNext ? "X" : "O");
     }
@@ -40,16 +46,21 @@ function Board({ xIsNext, squares, onPlay }) {
             <div className="flex flex-col gap-2">
                 {[0, 3, 6].map((rowStart) => (
                     <div key={rowStart} className="flex gap-2 justify-center">
-                        {" "}
-                        {[0, 1, 2].map((colOffset) => (
-                            <Square
-                                key={rowStart + colOffset}
-                                value={squares[rowStart + colOffset]}
-                                onSquareClick={() =>
-                                    handleClick(rowStart + colOffset)
-                                }
-                            />
-                        ))}
+                        {[0, 1, 2].map((colOffset) => {
+                            const index = rowStart + colOffset;
+                            return (
+                                <Square
+                                    key={index}
+                                    value={squares[index]}
+                                    onSquareClick={() => handleClick(index)}
+                                    highlight={
+                                        winningLine
+                                            ? winningLine.includes(index)
+                                            : false
+                                    } // 추가됨: 승리한 버튼 강조
+                                />
+                            );
+                        })}
                     </div>
                 ))}
             </div>
@@ -125,7 +136,7 @@ function calculateWinner(squares) {
             squares[a] === squares[b] &&
             squares[a] === squares[c]
         ) {
-            return squares[a];
+            return { winner: squares[a], line: lines[i] };
         }
     }
     return null;
