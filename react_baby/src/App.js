@@ -4,7 +4,7 @@ function Square({ value, onSquareClick, highlight }) {
     return (
         <button
             className={`square  h-20 w-20 text-3xl font-bold border border-gray-400 hover:bg-gray-200 ${
-                highlight ? "bg-yellow-200" : ""
+                highlight ? "bg-yellow-200 hover:bg-yellow-300" : ""
             }`}
             onClick={onSquareClick}
         >
